@@ -1,0 +1,19 @@
+services:
+  - type: worker
+    name: telegram-media-bot
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot/main.py
+    autoDeploy: true
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: DOWNLOAD_DIR
+        value: ./downloads
+      - key: MAX_FILE_SIZE_MB
+        value: "100"
+      - key: DEFAULT_YT_DLP_FORMAT
+        value: bestaudio/best
+      - key: LOG_LEVEL
+        value: INFO
