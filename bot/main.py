@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 from typing import Final
 from pathlib import Path
 import sys
@@ -38,11 +39,24 @@ async def _start_application() -> None:
             _application_started = True
 
 
+async def _configure_webhook() -> None:
+    webhook_url = os.getenv("WEBHOOK_URL") or os.getenv("VERCEL_URL")
+    if not webhook_url:
+        return
+
+    if not webhook_url.startswith("http://") and not webhook_url.startswith("https://"):
+        webhook_url = f"https://{webhook_url}"
+
+    await _start_application()
+    await bot_application.bot.set_webhook(webhook_url.rstrip("/"))
+
+
 async def app(scope, receive, send):
     if scope.get("type") != "http":
         return
 
     if scope.get("method") == "GET":
+        await _configure_webhook()
         body = b"Telegram bot is running"
         await send({
             "type": "http.response.start",
