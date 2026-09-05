@@ -1,6 +1,7 @@
 # bot/config.py (suggested)
 from dotenv import load_dotenv
 import os
+import tempfile
 
 load_dotenv()
 
@@ -9,6 +10,8 @@ if not BOT_TOKEN:
     raise RuntimeError("BOT_TOKEN is required in environment")
 
 DOWNLOAD_DIR = os.getenv("DOWNLOAD_DIR", "./downloads")
+if os.getenv("VERCEL") and not os.path.isabs(DOWNLOAD_DIR):
+    DOWNLOAD_DIR = os.path.join(tempfile.gettempdir(), "telegram-media-bot")
 try:
     MAX_FILE_SIZE_MB = int(os.getenv("MAX_FILE_SIZE_MB", "100"))
 except ValueError:
